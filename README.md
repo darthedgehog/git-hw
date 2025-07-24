@@ -167,11 +167,12 @@ version: '3.7'
 
 services:
  prometheus:
-  image: prom/prometheus:v2.36.2
+  image: prom/prometheus:v2.47.2
   container_name: ismagilov-ezh-netology-prometheus
+  command: --web.enable-lifecycle --config.file=/etc/Prometheus/prometheus.yml
   volumes:
    - ./prometheus/prometheus.yml
-   - db_data:/prometheus
+   - prometheus_data:/prometheus
   ports:
    - 9090:9090
   networks:
@@ -179,7 +180,7 @@ services:
   restart: always
 
  pushgetaway:
-  image: prom/pushgateway:latest
+  image: prom/pushgateway:v1.6.2
   container_name: ismagilov-ezh-netology-pushgateway
   ports:
    - 9091:9091
@@ -187,24 +188,26 @@ services:
    - ismagilov-ezh-my-netology-hw
   depends_on:
    - prometheus
-  restart: always
+  restart: unless-stopped
 
  grafana:
-  image: grafana/grafana:12.1.0
+  image: grafana/grafana
   container_name: ismagilov-ezh-netology-grafana
+  environment:
+   GF_PATHS_CONFIG: /etc/Grafana/custom.ini
   volumes:
    - grafana_data:/var/lib/grafana
-   - ./grafana/custom.ini:/etc/grafana/custom.ini
+   - ./grafana:/etc/grafana
   ports:
    - 80:3000
   networks:
    - ismagilov-ezh-my-netology-hw
   depens_on:
    - prometheus
-  restart: always
+  restart: unless-stopped
 
 volumes:
- db_data: {}
+ prometheus_data: {}
  grafana_data: {}
 
 network:
@@ -213,6 +216,7 @@ network:
   ipam:
    config:
     - subnet: 10.5.0.0/16
+      gateway: 10.5.0.1
 ```
 
 ---
