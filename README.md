@@ -22,7 +22,13 @@ services: {}
 
 volumes: {}
 
-network: {}
+network:
+ network1:
+  name: ismagilovezh-netology-hw
+  driver: bridge
+  ipam:
+   config:
+    - subnet: 10.5.0.0/16
 ```
 
 
