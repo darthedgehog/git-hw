@@ -232,7 +232,7 @@ networks:
 
 ### Задание 7
 
-[compose.yml](compose.yml)
+[compose.yml](6-04/compose.yml)
 
 ![img](img/img1.png)
 ![img](img/img2.png)
@@ -246,3 +246,22 @@ networks:
 ---
 
 ### Задание 9
+
+![img](img/img4.png)
+
+---
+
+### Задание 10
+
+**Процесс развертывания:**
+1. Создам структуру директорий и скопирую туда `compose.yml`, `prometheus.yml`, `alertmanager.yml`, `alert_rules.yml`.
+2. Запущу всё командой:
+   ```bash
+   docker compose up -d
+   ```
+3. Послу запуска сервисов проверю их доступность:
+   * Prometheus: http://localhost:9090
+   * Pushgateway: http://localhost:9091
+   * Alertmanager: http://localhost:9093
+
+Такой способ развёртывания позволяет использовать образы из чистого состояния и проверяет, что все зависимости прописаны правильно и проект можно развернуть с нуля, а также может быть полезно для CI/CD
