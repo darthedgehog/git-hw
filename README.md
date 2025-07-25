@@ -22,12 +22,13 @@ services: {}
 
 volumes: {}
 
-network:
+networks:
  ismagilov-ezh-my-netology-hw:
   driver: bridge
   ipam:
    config:
     - subnet: 10.5.0.0/16
+      gateway: 10.5.0.1
 ```
 
 
@@ -42,25 +43,27 @@ version: '3.7'
 
 services:
  prometheus:
-  image: prom/prometheus:v2.36.2
+  image: prom/prometheus:v2.47.2
   container_name: ismagilov-ezh-netology-prometheus
+  command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
   volumes:
-   - ./prometheus/prometheus.yml
-   - db_data:/prometheus
+   - ./prometheus:/etc/prometheus
+   - prometheus_data:/prometheus
   ports:
    - 9090:9090
   networks:
    - ismagilov-ezh-my-netology-hw
 
 volumes:
- db_data: {}
+ prometheus_data: {}
 
-network:
+networks:
  ismagilov-ezh-my-netology-hw:
   driver: bridge
   ipam:
    config:
     - subnet: 10.5.0.0/16
+      gateway: 10.5.0.1
 ```
 
 
@@ -75,18 +78,19 @@ version: '3.7'
 
 services:
  prometheus:
-  image: prom/prometheus:v2.36.2
+  image: prom/prometheus:v2.47.2
   container_name: ismagilov-ezh-netology-prometheus
+  command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
   volumes:
-   - ./prometheus/prometheus.yml
-   - db_data:/prometheus
+   - ./prometheus:/etc/prometheus
+   - prometheus_data:/prometheus
   ports:
    - 9090:9090
   networks:
    - ismagilov-ezh-my-netology-hw
 
  pushgetaway:
-  image: prom/pushgateway:latest
+  image: prom/pushgateway:v1.6.2
   container_name: ismagilov-ezh-netology-pushgateway
   ports:
    - 9091:9091
@@ -94,14 +98,15 @@ services:
    - ismagilov-ezh-my-netology-hw
 
 volumes:
- db_data: {}
+ prometheus_data: {}
 
-network:
+networks:
  ismagilov-ezh-my-netology-hw:
   driver: bridge
   ipam:
    config:
     - subnet: 10.5.0.0/16
+      gateway: 10.5.0.1
 ```
 
 ---
@@ -115,18 +120,19 @@ version: '3.7'
 
 services:
  prometheus:
-  image: prom/prometheus:v2.36.2
+  image: prom/prometheus:v2.47.2
   container_name: ismagilov-ezh-netology-prometheus
+  command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
   volumes:
-   - ./prometheus/prometheus.yml
-   - db_data:/prometheus
+   - ./prometheus:/etc/prometheus
+   - prometheus_data:/prometheus
   ports:
    - 9090:9090
   networks:
    - ismagilov-ezh-my-netology-hw
 
  pushgetaway:
-  image: prom/pushgateway:latest
+  image: prom/pushgateway:v1.6.2
   container_name: ismagilov-ezh-netology-pushgateway
   ports:
    - 9091:9091
@@ -134,26 +140,29 @@ services:
    - ismagilov-ezh-my-netology-hw
 
  grafana:
-  image: grafana/grafana:12.1.0
+  image: grafana/grafana
   container_name: ismagilov-ezh-netology-grafana
+  environment:
+   GF_PATH_CONFIG: /etc/grafana/custom.ini
   volumes:
    - grafana_data:/var/lib/grafana
-   - ./grafana/custom.ini:/etc/grafana/custom.ini
+   - ./grafana:/etc/grafana
   ports:
    - 80:3000
   networks:
    - ismagilov-ezh-my-netology-hw
 
 volumes:
- db_data: {}
+ prometheus_data: {}
  grafana_data: {}
 
-network:
+networks:
  ismagilov-ezh-my-netology-hw:
   driver: bridge
   ipam:
    config:
     - subnet: 10.5.0.0/16
+      gateway: 10.5.0.1
 ```
 
 ---
@@ -169,9 +178,9 @@ services:
  prometheus:
   image: prom/prometheus:v2.47.2
   container_name: ismagilov-ezh-netology-prometheus
-  command: --web.enable-lifecycle --config.file=/etc/Prometheus/prometheus.yml
+  command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
   volumes:
-   - ./prometheus/prometheus.yml
+   - ./prometheus:/etc/prometheus
    - prometheus_data:/prometheus
   ports:
    - 9090:9090
@@ -194,7 +203,7 @@ services:
   image: grafana/grafana
   container_name: ismagilov-ezh-netology-grafana
   environment:
-   GF_PATHS_CONFIG: /etc/Grafana/custom.ini
+   GF_PATHS_CONFIG: /etc/grafana/custom.ini
   volumes:
    - grafana_data:/var/lib/grafana
    - ./grafana:/etc/grafana
@@ -210,7 +219,7 @@ volumes:
  prometheus_data: {}
  grafana_data: {}
 
-network:
+networks:
  ismagilov-ezh-my-netology-hw:
   driver: bridge
   ipam:
@@ -223,3 +232,17 @@ network:
 
 ### Задание 7
 
+[compose.yml](compose.yml)
+
+![img](img/img1.png)
+![img](img/img2.png)
+
+---
+
+### Задание 8
+
+![img](img/img3.png)
+
+---
+
+### Задание 9
