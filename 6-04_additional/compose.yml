@@ -1,0 +1,71 @@
+version: '3.7'
+
+services:
+ prometheus:
+  image: prom/prometheus:v2.47.2
+  container_name: ismagilov-ezh-netology-prometheus
+  command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
+  volumes:
+   - ./prometheus:/etc/prometheus
+   - prometheus_data:/prometheus
+  ports:
+   - 9090:9090
+  networks:
+   - ismagilov-ezh-my-netology-hw
+  restart: always
+
+ pushgateway:
+  image: prom/pushgateway:v1.6.2
+  container_name: ismagilov-ezh-netology-pushgateway
+  ports:
+   - 9091:9091
+  networks:
+   - ismagilov-ezh-my-netology-hw
+  depends_on:
+   - prometheus
+  restart: unless-stopped
+
+# grafana:
+#  image: grafana/grafana
+#  container_name: ismagilov-ezh-netology-grafana
+#  environment:
+#   GF_PATHS_CONFIG: /etc/grafana/custom.ini
+#  volumes:
+#   - grafana_data:/var/lib/grafana
+#   - ./grafana:/etc/grafana
+#  ports:
+#   - 80:3000
+#  networks:
+#   - ismagilov-ezh-my-netology-hw
+#  depends_on:
+#   - prometheus
+#  restart: unless-stopped
+
+ alertmanager:
+  image: prom/alertmanager:v0.26.0
+  container_name: ismagilov-ezh-netology-alertmanager
+  command: --config.file=/etc/alertmanager/alertmanager.yml
+  ports:
+   - 9093:9093
+  volumes:
+   - ./alertmanager:/etc/alertmanager
+   - alertmanager_data:/data
+  networks:
+   - ismagilov-ezh-my-netology-hw
+  depends_on:
+   - prometheus
+  restart: always
+
+
+volumes:
+ prometheus_data: {}
+ grafana_data: {}
+ alertmanager_data: {}
+
+networks:
+ ismagilov-ezh-my-netology-hw:
+  driver: bridge
+  ipam:
+   config:
+    - subnet: 10.5.0.0/16
+      gateway: 10.5.0.1
